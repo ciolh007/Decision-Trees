@@ -1,0 +1,2570 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>Decision Trees</title>
+
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/ntnuerc.css">
+
+        <!-- Theme used for syntax highlighting of code -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
+        <script src="https://daybrush.com/scenejs/release/latest/dist/scene.min.js"></script>
+		
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+        <script src="js/ntnu.js"></script>
+    </head>
+    <body>
+        <div class="reveal">
+        <div class="slides">
+            
+<section id="first" data-state="first">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1> Decision Trees</h1>
+
+   <div class="author" style="text-align:center;">
+    
+<p>
+      Jacky Baltes<br>
+      National Taiwan Normal University<br>
+      Taipei, Taiwan<br>
+      <a href="mailto:jacky.baltes@ntnu.edu.tw">jacky.baltes@ntnu.edu.tw</a><br>
+</p>
+
+   </div>
+   <div class="date">
+    08 May 2022
+   </div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-5cf989a5-7b69-4b9c-9049-a4a94898b317" ><span id="id-5cf989a5-7b69-4b9c-9049-a4a94898b317"><img id="img-id-5cf989a5-7b69-4b9c-9049-a4a94898b317"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-cdd6259c-58c0-4ff0-92d3-e7af3f6e9d16" ><span id="id-cdd6259c-58c0-4ff0-92d3-e7af3f6e9d16"><img id="img-id-cdd6259c-58c0-4ff0-92d3-e7af3f6e9d16" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="introduction" data-state="introduction">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+<div class="document" id="sample-domain-sports">
+<h1 class="title">Sample Domain - Sports</h1>
+<ul class="simple">
+<li>Learn when someone wants to play tennis</li>
+<li>Dataset has six attributes<ul>
+<li>Sky, Temp, Humid, Wind, Water, Forecast</li>
+<li>Binary classification problem: <strong>Yes</strong>/<strong>No</strong></li>
+</ul>
+</li>
+</ul>
+<div class="jb-center docutils container">
+<div class="jb-very-small docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="11%" />
+<col width="14%" />
+<col width="14%" />
+<col width="13%" />
+<col width="18%" />
+<col width="18%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Sky</th>
+<th class="head">Temp</th>
+<th class="head">Humid</th>
+<th class="head">Wind</th>
+<th class="head">Water</th>
+<th class="head">Forecast</th>
+<th class="head"><strong>Play</strong></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Sunny</td>
+<td>Warm</td>
+<td>Normal</td>
+<td>Strong</td>
+<td>Warm</td>
+<td>Same</td>
+<td>Yes</td>
+</tr>
+<tr><td>Sunny</td>
+<td>Warm</td>
+<td>High</td>
+<td>Strong</td>
+<td>Warm</td>
+<td>Same</td>
+<td>Yes</td>
+</tr>
+<tr><td>Rainy</td>
+<td>Cold</td>
+<td>High</td>
+<td>Strong</td>
+<td>Warm</td>
+<td>Change</td>
+<td>No</td>
+</tr>
+<tr><td>Sunny</td>
+<td>Warm</td>
+<td>High</td>
+<td>Strong</td>
+<td>Cool</td>
+<td>Change</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-e2924a7a-2f7e-45ca-a27e-69437cd5b3ec" ><span id="id-e2924a7a-2f7e-45ca-a27e-69437cd5b3ec"><img id="img-id-e2924a7a-2f7e-45ca-a27e-69437cd5b3ec"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-ed5fa1b8-9416-4d6f-be10-74a9d44b0019" ><span id="id-ed5fa1b8-9416-4d6f-be10-74a9d44b0019"><img id="img-id-ed5fa1b8-9416-4d6f-be10-74a9d44b0019" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00004_frag_00001" data-state="slide_00004_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+<div class="jb-input jb-render jb-code" style="text-align:center">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-input-code jb-render">
+<div style="font-size:0.5em;"><!-- start of style="font-size:0.5em;" -->
+<div class="highlight" style="background: #f8f8f8; color:#101010;display=inline-block;"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">pandas</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">pd</span>
+<span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">IPython.display</span> <span style="color: #008000; font-weight: bold">import</span> display, HTML
+
+random<span style="color: #666666">.</span>seed(<span style="color: #666666">20220508</span>)
+np<span style="color: #666666">.</span>random<span style="color: #666666">.</span>seed(<span style="color: #666666">20220509</span>)
+
+FlowerAttributes <span style="color: #666666">=</span> {
+    <span style="color: #BA2121">&#39;Size&#39;</span> : [ <span style="color: #BA2121">&#39;small&#39;</span>, <span style="color: #BA2121">&#39;medium&#39;</span>, <span style="color: #BA2121">&#39;large&#39;</span> ],
+    <span style="color: #BA2121">&#39;Color&#39;</span> : [ <span style="color: #BA2121">&#39;red&#39;</span>, <span style="color: #BA2121">&#39;green&#39;</span>, <span style="color: #BA2121">&#39;blue&#39;</span>, <span style="color: #BA2121">&#39;purple&#39;</span>, <span style="color: #BA2121">&#39;other&#39;</span> ],
+    <span style="color: #BA2121">&#39;Fragrance&#39;</span>: [ <span style="color: #BA2121">&#39;nice&#39;</span>, <span style="color: #BA2121">&#39;none&#39;</span>, <span style="color: #BA2121">&#39;bad&#39;</span> ],
+    <span style="color: #BA2121">&#39;Thorns&#39;</span> : [ <span style="color: #BA2121">&#39;yes&#39;</span>, <span style="color: #BA2121">&#39;no&#39;</span> ],
+}
+
+<span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">secretClassifyTarget</span>( inst ):
+    resp <span style="color: #666666">=</span> <span style="color: #BA2121">&#39;no&#39;</span>
+    <span style="color: #008000; font-weight: bold">if</span> ( ( inst[<span style="color: #666666">0</span>] <span style="color: #666666">==</span> <span style="color: #BA2121">&#39;medium&#39;</span> ) <span style="color: #AA22FF; font-weight: bold">and</span> ( inst[<span style="color: #666666">2</span>] <span style="color: #666666">==</span> <span style="color: #BA2121">&#39;nice&#39;</span> ) ):
+        resp <span style="color: #666666">=</span> <span style="color: #BA2121">&#39;yes&#39;</span>
+    <span style="color: #008000; font-weight: bold">elif</span> ( ( ( inst[<span style="color: #666666">0</span>] <span style="color: #666666">==</span> <span style="color: #BA2121">&#39;large&#39;</span> ) <span style="color: #AA22FF; font-weight: bold">or</span> ( inst[<span style="color: #666666">0</span>] <span style="color: #666666">==</span> <span style="color: #BA2121">&#39;small&#39;</span> ) ) <span style="color: #AA22FF; font-weight: bold">and</span> ( inst[<span style="color: #666666">3</span>] <span style="color: #666666">==</span> <span style="color: #BA2121">&#39;no&#39;</span> ) ):
+        resp <span style="color: #666666">=</span> <span style="color: #BA2121">&#39;yes&#39;</span>
+    <span style="color: #008000; font-weight: bold">return</span> resp
+
+done <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">False</span>
+<span style="color: #008000; font-weight: bold">while</span>( <span style="color: #AA22FF; font-weight: bold">not</span> done ):
+    instances <span style="color: #666666">=</span> []
+
+    <span style="color: #008000; font-weight: bold">while</span>( <span style="color: #008000">len</span>(instances) <span style="color: #666666">&lt;</span> <span style="color: #666666">8</span> ):
+        inst <span style="color: #666666">=</span> []
+        <span style="color: #008000; font-weight: bold">for</span> k <span style="color: #AA22FF; font-weight: bold">in</span> FlowerAttributes:
+            inst<span style="color: #666666">.</span>append( random<span style="color: #666666">.</span>choice( FlowerAttributes[ k ] ) )
+        <span style="color: #008000; font-weight: bold">if</span> inst <span style="color: #AA22FF; font-weight: bold">not</span> <span style="color: #AA22FF; font-weight: bold">in</span> instances:
+            instances<span style="color: #666666">.</span>append(inst)
+
+    target <span style="color: #666666">=</span> []
+    <span style="color: #008000; font-weight: bold">for</span> i <span style="color: #AA22FF; font-weight: bold">in</span> instances:
+        target<span style="color: #666666">.</span>append( secretClassifyTarget( i ) )
+
+    <span style="color: #008000; font-weight: bold">if</span> ( <span style="color: #BA2121">&#39;yes&#39;</span> <span style="color: #AA22FF; font-weight: bold">in</span> target ) <span style="color: #AA22FF; font-weight: bold">and</span> ( <span style="color: #BA2121">&#39;no&#39;</span> <span style="color: #AA22FF; font-weight: bold">in</span> target ):
+        done <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">True</span>
+</pre></div>
+
+</div><!-- end of style="font-size:0.5em;" -->
+</div><!-- end of jb-input-code jb-render -->
+
+</div>
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-cce91638-0996-48c7-a094-83e7727bb8b1" ><span id="id-cce91638-0996-48c7-a094-83e7727bb8b1"><img id="img-id-cce91638-0996-48c7-a094-83e7727bb8b1"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-bc904403-7d7c-4d61-ae01-33b65caddeb9" ><span id="id-bc904403-7d7c-4d61-ae01-33b65caddeb9"><img id="img-id-bc904403-7d7c-4d61-ae01-33b65caddeb9" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00005_frag_00001" data-state="slide_00005_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+<div class="jb-input jb-render jb-code" style="text-align:center">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-input-code jb-render">
+<div class="highlight" style="background: #f8f8f8; color:#101010;display=inline-block;"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">pandas</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">pd</span>
+<span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">IPython.display</span> <span style="color: #008000; font-weight: bold">import</span> display, HTML
+<span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">random</span>
+
+df <span style="color: #666666">=</span> pd<span style="color: #666666">.</span>DataFrame(instances, 
+                  columns<span style="color: #666666">=</span>[<span style="color: #BA2121">&#39;Size&#39;</span>, <span style="color: #BA2121">&#39;Color&#39;</span>, <span style="color: #BA2121">&#39;Fragrance&#39;</span>, 
+                           <span style="color: #BA2121">&#39;Thorns&#39;</span> ], 
+                  index<span style="color: #666666">=</span>[ <span style="color: #BA2121">&#39;F_</span><span style="color: #BB6688; font-weight: bold">{0}</span><span style="color: #BA2121">&#39;</span><span style="color: #666666">.</span>format(i<span style="color: #666666">+1</span>) 
+                         <span style="color: #008000; font-weight: bold">for</span> i <span style="color: #AA22FF; font-weight: bold">in</span> <span style="color: #008000">range</span>(<span style="color: #008000">len</span>(instances)) ] )
+
+df1 <span style="color: #666666">=</span> df<span style="color: #666666">.</span>assign(Target <span style="color: #666666">=</span> target )
+</pre></div>
+
+</div><!-- end of jb-input-code jb-render -->
+
+</div>
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-13d2b019-4aa6-4f3e-8204-0f39d8fdfe0d" ><span id="id-13d2b019-4aa6-4f3e-8204-0f39d8fdfe0d"><img id="img-id-13d2b019-4aa6-4f3e-8204-0f39d8fdfe0d"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-966fb362-9ff0-4203-801a-e1749f413b36" ><span id="id-966fb362-9ff0-4203-801a-e1749f413b36"><img id="img-id-966fb362-9ff0-4203-801a-e1749f413b36" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00006_frag_00001" data-state="slide_00006_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+<div class="jb-print jb-render">
+<div class="jb-output jb-render code" style="text-align:center">
+<div class="jb-stdout code" style="display:inline-block; width:90%">
+<pre >
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Size</th>
+      <th>Color</th>
+      <th>Fragrance</th>
+      <th>Thorns</th>
+      <th>Target</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>F_1</th>
+      <td>medium</td>
+      <td>purple</td>
+      <td>nice</td>
+      <td>no</td>
+      <td>yes</td>
+    </tr>
+    <tr>
+      <th>F_2</th>
+      <td>small</td>
+      <td>purple</td>
+      <td>nice</td>
+      <td>yes</td>
+      <td>no</td>
+    </tr>
+    <tr>
+      <th>F_3</th>
+      <td>small</td>
+      <td>purple</td>
+      <td>none</td>
+      <td>yes</td>
+      <td>no</td>
+    </tr>
+    <tr>
+      <th>F_4</th>
+      <td>medium</td>
+      <td>other</td>
+      <td>bad</td>
+      <td>no</td>
+      <td>no</td>
+    </tr>
+    <tr>
+      <th>F_5</th>
+      <td>small</td>
+      <td>purple</td>
+      <td>bad</td>
+      <td>no</td>
+      <td>yes</td>
+    </tr>
+    <tr>
+      <th>F_6</th>
+      <td>large</td>
+      <td>green</td>
+      <td>nice</td>
+      <td>no</td>
+      <td>yes</td>
+    </tr>
+    <tr>
+      <th>F_7</th>
+      <td>medium</td>
+      <td>other</td>
+      <td>none</td>
+      <td>yes</td>
+      <td>no</td>
+    </tr>
+    <tr>
+      <th>F_8</th>
+      <td>large</td>
+      <td>red</td>
+      <td>bad</td>
+      <td>no</td>
+      <td>yes</td>
+    </tr>
+  </tbody>
+</table>
+</pre>
+</div>
+</div>
+
+</div><!-- end of jb-print jb-render -->
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-7e97f3c8-5456-4c62-ae7b-df4f3692a84f" ><span id="id-7e97f3c8-5456-4c62-ae7b-df4f3692a84f"><img id="img-id-7e97f3c8-5456-4c62-ae7b-df4f3692a84f"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-972ce39b-9b2c-4593-ad8a-fd6b7406c215" ><span id="id-972ce39b-9b2c-4593-ad8a-fd6b7406c215"><img id="img-id-972ce39b-9b2c-4593-ad8a-fd6b7406c215" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00007_frag_00001" data-state="slide_00007_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+<div class="jb-input jb-render jb-code" style="text-align:center">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-input-code jb-render">
+<div class="highlight" style="background: #f8f8f8; color:#101010;display=inline-block;"><pre style="line-height: 125%"><span></span>df<span style="color: #666666">.</span>describe()
+</pre></div>
+
+</div><!-- end of jb-input-code jb-render -->
+
+</div>
+
+<div class="jb-output-code jb-render">
+
+  <div id="df-5cfd4cf2-fffb-48e6-8209-b0c9ae634b09">
+    <div class="colab-df-container">
+      <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Size</th>
+      <th>Color</th>
+      <th>Fragrance</th>
+      <th>Thorns</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>8</td>
+      <td>8</td>
+      <td>8</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>unique</th>
+      <td>3</td>
+      <td>4</td>
+      <td>3</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>top</th>
+      <td>medium</td>
+      <td>purple</td>
+      <td>nice</td>
+      <td>no</td>
+    </tr>
+    <tr>
+      <th>freq</th>
+      <td>3</td>
+      <td>4</td>
+      <td>3</td>
+      <td>5</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+      <button class="colab-df-convert" onclick="convertToInteractive('df-5cfd4cf2-fffb-48e6-8209-b0c9ae634b09')"
+              title="Convert this dataframe to an interactive table."
+              style="display:none;">
+        
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px">
+    <path d="M0 0h24v24H0V0z" fill="none"/>
+    <path d="M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z"/><path d="M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z"/>
+  </svg>
+      </button>
+      
+  <style>
+    .colab-df-container {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+      <script>
+        const buttonEl =
+          document.querySelector('#df-5cfd4cf2-fffb-48e6-8209-b0c9ae634b09 button.colab-df-convert');
+        buttonEl.style.display =
+          google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+        async function convertToInteractive(key) {
+          const element = document.querySelector('#df-5cfd4cf2-fffb-48e6-8209-b0c9ae634b09');
+          const dataTable =
+            await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                     [key], {});
+          if (!dataTable) return;
+
+          const docLinkHtml = 'Like what you see? Visit the ' +
+            '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+            + ' to learn more about interactive tables.';
+          element.innerHTML = '';
+          dataTable['output_type'] = 'display_data';
+          await google.colab.output.renderOutput(dataTable, element);
+          const docLink = document.createElement('div');
+          docLink.innerHTML = docLinkHtml;
+          element.appendChild(docLink);
+        }
+      </script>
+    </div>
+  </div>
+  
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-dec92f00-dbd8-4e40-8b4d-be1547ecbd25" ><span id="id-dec92f00-dbd8-4e40-8b4d-be1547ecbd25"><img id="img-id-dec92f00-dbd8-4e40-8b4d-be1547ecbd25"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-97f0f58a-e10d-48c2-9a8d-0464c3922fdb" ><span id="id-97f0f58a-e10d-48c2-9a8d-0464c3922fdb"><img id="img-id-97f0f58a-e10d-48c2-9a8d-0464c3922fdb" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00008_frag_00001" data-state="slide_00008_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+<div class="jb-input jb-render jb-code" style="text-align:center">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-input-code jb-render">
+<div class="highlight" style="background: #f8f8f8; color:#101010;display=inline-block;"><pre style="line-height: 125%"><span></span>NInstances <span style="color: #666666">=</span> <span style="color: #666666">1</span>
+<span style="color: #008000; font-weight: bold">for</span> f <span style="color: #AA22FF; font-weight: bold">in</span> df<span style="color: #666666">.</span>columns[:<span style="color: #666666">-1</span>]:
+    n <span style="color: #666666">=</span> df<span style="color: #666666">.</span>groupby(f)[f]<span style="color: #666666">.</span>nunique()<span style="color: #666666">.</span>count()
+    NInstances <span style="color: #666666">=</span> NInstances <span style="color: #666666">*</span> n
+
+<span style="color: #008000">print</span>(NInstances)
+</pre></div>
+
+</div><!-- end of jb-input-code jb-render -->
+
+</div>
+<div class="jb-print jb-render">
+<div class="jb-output jb-render code" style="text-align:center">
+<div class="jb-stdout code" style="display:inline-block; width:90%">
+<pre >
+36
+</pre>
+</div>
+</div>
+
+</div><!-- end of jb-print jb-render -->
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-45681258-51e9-438b-ae91-e84c15d3e108" ><span id="id-45681258-51e9-438b-ae91-e84c15d3e108"><img id="img-id-45681258-51e9-438b-ae91-e84c15d3e108"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-9477b345-c14d-4530-9c37-4860c3470ee1" ><span id="id-9477b345-c14d-4530-9c37-4860c3470ee1"><img id="img-id-9477b345-c14d-4530-9c37-4860c3470ee1" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="background" data-state="background">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+<div class="document" id="complexity">
+<h1 class="title">Complexity</h1>
+<ol class="arabic simple">
+<li>Calculate the number of different instances for this domain.
+Number of Instances is 36</li>
+</ol>
+<ol class="arabic">
+<li><p class="first">For a simple classification problem (e.g., binary classification, true or false ), how many different
+concepts can be defined over this domain?</p>
+<blockquote>
+<p>#Concepts = 2 ** #Instances</p>
+</blockquote>
+</li>
+</ol>
+</div>
+
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-6c763e8a-5836-43b2-a76c-c4f264ea14c3" ><span id="id-6c763e8a-5836-43b2-a76c-c4f264ea14c3"><img id="img-id-6c763e8a-5836-43b2-a76c-c4f264ea14c3"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-f5676fca-ebc6-406b-a99e-80de33e03c68" ><span id="id-f5676fca-ebc6-406b-a99e-80de33e03c68"><img id="img-id-f5676fca-ebc6-406b-a99e-80de33e03c68" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="hierarchy1" data-state="hierarchy1">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.40.1 (20161225.0304)
+ -->
+<!-- Title: %3 Pages: 1 -->
+<svg width="566pt" height="222pt"
+ viewBox="0.00 0.00 566.00 222.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 218)">
+<title>%3</title>
+<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-218 562,-218 562,4 -4,4"/>
+<!-- R -->
+<g id="node1" class="node">
+<title>R</title>
+<ellipse fill="none" stroke="#000000" cx="423" cy="-196" rx="27" ry="18"/>
+<text text-anchor="middle" x="423" y="-192.3" font-family="Times,serif" font-size="14.00" fill="#000000">Size</text>
+</g>
+<!-- C -->
+<g id="node2" class="node">
+<title>C</title>
+<ellipse fill="none" stroke="#000000" cx="207" cy="-108" rx="32.4942" ry="18"/>
+<text text-anchor="middle" x="207" y="-104.3" font-family="Times,serif" font-size="14.00" fill="#000000">Color</text>
+</g>
+<!-- R&#45;&gt;C -->
+<g id="edge1" class="edge">
+<title>R&#45;&gt;C</title>
+<path fill="none" stroke="#000000" d="M399.8842,-186.5825C362.1662,-171.2159 287.1334,-140.6469 242.5841,-122.4972"/>
+<polygon fill="#000000" stroke="#000000" points="243.8783,-119.2452 233.2968,-118.7135 241.2372,-125.7279 243.8783,-119.2452"/>
+<text text-anchor="middle" x="350.5" y="-148.8" font-family="Times,serif" font-size="14.00" fill="#000000">small</text>
+</g>
+<!-- F -->
+<g id="node3" class="node">
+<title>F</title>
+<ellipse fill="none" stroke="#000000" cx="423" cy="-108" rx="47.3916" ry="18"/>
+<text text-anchor="middle" x="423" y="-104.3" font-family="Times,serif" font-size="14.00" fill="#000000">Fragrance</text>
+</g>
+<!-- R&#45;&gt;F -->
+<g id="edge2" class="edge">
+<title>R&#45;&gt;F</title>
+<path fill="none" stroke="#000000" d="M423,-177.7663C423,-165.8492 423,-150.0384 423,-136.4817"/>
+<polygon fill="#000000" stroke="#000000" points="426.5001,-136.2103 423,-126.2103 419.5001,-136.2103 426.5001,-136.2103"/>
+<text text-anchor="middle" x="447" y="-148.8" font-family="Times,serif" font-size="14.00" fill="#000000">medium</text>
+</g>
+<!-- No1 -->
+<g id="node4" class="node">
+<title>No1</title>
+<polygon fill="none" stroke="#000000" points="542,-127 488,-127 488,-89 542,-89 542,-127"/>
+<text text-anchor="middle" x="515" y="-111.8" font-family="Times,serif" font-size="14.00" fill="#000000">No</text>
+<text text-anchor="middle" x="515" y="-96.8" font-family="Times,serif" font-size="14.00" fill="#000000">L1</text>
+</g>
+<!-- R&#45;&gt;No1 -->
+<g id="edge3" class="edge">
+<title>R&#45;&gt;No1</title>
+<path fill="none" stroke="#000000" d="M443.3505,-184.0029C453.4299,-177.5581 465.4524,-169.0804 475,-160 482.5955,-152.7762 489.8994,-144.0259 496.1397,-135.7802"/>
+<polygon fill="#000000" stroke="#000000" points="499.1495,-137.5937 502.2255,-127.4551 493.4984,-133.4626 499.1495,-137.5937"/>
+<text text-anchor="middle" x="503" y="-148.8" font-family="Times,serif" font-size="14.00" fill="#000000">large</text>
+</g>
+<!-- G1 -->
+<g id="node5" class="node">
+<title>G1</title>
+<polygon fill="none" stroke="#000000" points="54,-38 0,-38 0,0 54,0 54,-38"/>
+<text text-anchor="middle" x="27" y="-22.8" font-family="Times,serif" font-size="14.00" fill="#000000">Yes</text>
+<text text-anchor="middle" x="27" y="-7.8" font-family="Times,serif" font-size="14.00" fill="#000000">L2</text>
+</g>
+<!-- C&#45;&gt;G1 -->
+<g id="edge4" class="edge">
+<title>C&#45;&gt;G1</title>
+<path fill="none" stroke="#000000" d="M176.899,-100.9858C153.6998,-94.8966 121.2555,-84.8683 95,-71 81.3588,-63.7946 67.5998,-53.8828 56.0613,-44.6441"/>
+<polygon fill="#000000" stroke="#000000" points="58.032,-41.7332 48.0854,-38.0842 53.5854,-47.1396 58.032,-41.7332"/>
+<text text-anchor="middle" x="111" y="-59.8" font-family="Times,serif" font-size="14.00" fill="#000000">green</text>
+</g>
+<!-- P1 -->
+<g id="node6" class="node">
+<title>P1</title>
+<polygon fill="none" stroke="#000000" points="126,-38 72,-38 72,0 126,0 126,-38"/>
+<text text-anchor="middle" x="99" y="-22.8" font-family="Times,serif" font-size="14.00" fill="#000000">Yes</text>
+<text text-anchor="middle" x="99" y="-7.8" font-family="Times,serif" font-size="14.00" fill="#000000">L3</text>
+</g>
+<!-- C&#45;&gt;P1 -->
+<g id="edge5" class="edge">
+<title>C&#45;&gt;P1</title>
+<path fill="none" stroke="#000000" d="M183.0511,-95.6184C171.3425,-89.0435 157.3627,-80.3884 146,-71 136.9503,-63.5227 128.0469,-54.2966 120.4647,-45.7016"/>
+<polygon fill="#000000" stroke="#000000" points="123.0731,-43.3666 113.9065,-38.0539 117.7593,-47.9234 123.0731,-43.3666"/>
+<text text-anchor="middle" x="164.5" y="-59.8" font-family="Times,serif" font-size="14.00" fill="#000000">purple</text>
+</g>
+<!-- R1 -->
+<g id="node7" class="node">
+<title>R1</title>
+<polygon fill="none" stroke="#000000" points="198,-38 144,-38 144,0 198,0 198,-38"/>
+<text text-anchor="middle" x="171" y="-22.8" font-family="Times,serif" font-size="14.00" fill="#000000">No</text>
+<text text-anchor="middle" x="171" y="-7.8" font-family="Times,serif" font-size="14.00" fill="#000000">L4</text>
+</g>
+<!-- C&#45;&gt;R1 -->
+<g id="edge6" class="edge">
+<title>C&#45;&gt;R1</title>
+<path fill="none" stroke="#000000" d="M199.8876,-90.4165C194.9261,-78.1507 188.197,-61.5147 182.4815,-47.3849"/>
+<polygon fill="#000000" stroke="#000000" points="185.7153,-46.0455 178.7208,-38.0876 179.2261,-48.6704 185.7153,-46.0455"/>
+<text text-anchor="middle" x="201.5" y="-59.8" font-family="Times,serif" font-size="14.00" fill="#000000">red</text>
+</g>
+<!-- B1 -->
+<g id="node8" class="node">
+<title>B1</title>
+<polygon fill="none" stroke="#000000" points="270,-38 216,-38 216,0 270,0 270,-38"/>
+<text text-anchor="middle" x="243" y="-22.8" font-family="Times,serif" font-size="14.00" fill="#000000">No</text>
+<text text-anchor="middle" x="243" y="-7.8" font-family="Times,serif" font-size="14.00" fill="#000000">L5</text>
+</g>
+<!-- C&#45;&gt;B1 -->
+<g id="edge7" class="edge">
+<title>C&#45;&gt;B1</title>
+<path fill="none" stroke="#000000" d="M214.1124,-90.4165C219.0739,-78.1507 225.803,-61.5147 231.5185,-47.3849"/>
+<polygon fill="#000000" stroke="#000000" points="234.7739,-48.6704 235.2792,-38.0876 228.2847,-46.0455 234.7739,-48.6704"/>
+<text text-anchor="middle" x="240.5" y="-59.8" font-family="Times,serif" font-size="14.00" fill="#000000">blue</text>
+</g>
+<!-- O1 -->
+<g id="node9" class="node">
+<title>O1</title>
+<polygon fill="none" stroke="#000000" points="342,-38 288,-38 288,0 342,0 342,-38"/>
+<text text-anchor="middle" x="315" y="-22.8" font-family="Times,serif" font-size="14.00" fill="#000000">No</text>
+<text text-anchor="middle" x="315" y="-7.8" font-family="Times,serif" font-size="14.00" fill="#000000">L6</text>
+</g>
+<!-- C&#45;&gt;O1 -->
+<g id="edge8" class="edge">
+<title>C&#45;&gt;O1</title>
+<path fill="none" stroke="#000000" d="M227.2781,-93.6572C236.4997,-86.967 247.4585,-78.779 257,-71 267.0723,-62.7882 277.7552,-53.4145 287.1711,-44.9082"/>
+<polygon fill="#000000" stroke="#000000" points="289.7062,-47.3334 294.7413,-38.0115 284.9919,-42.1588 289.7062,-47.3334"/>
+<text text-anchor="middle" x="289" y="-59.8" font-family="Times,serif" font-size="14.00" fill="#000000">other</text>
+</g>
+<!-- F1none -->
+<g id="node10" class="node">
+<title>F1none</title>
+<polygon fill="none" stroke="#000000" points="414,-38 360,-38 360,0 414,0 414,-38"/>
+<text text-anchor="middle" x="387" y="-22.8" font-family="Times,serif" font-size="14.00" fill="#000000">No</text>
+<text text-anchor="middle" x="387" y="-7.8" font-family="Times,serif" font-size="14.00" fill="#000000">L7</text>
+</g>
+<!-- F&#45;&gt;F1none -->
+<g id="edge9" class="edge">
+<title>F&#45;&gt;F1none</title>
+<path fill="none" stroke="#000000" d="M415.6709,-89.9356C413.2292,-83.9136 410.4959,-77.1683 408,-71 404.953,-63.4695 401.6613,-55.3239 398.6083,-47.7641"/>
+<polygon fill="#000000" stroke="#000000" points="401.7622,-46.2268 394.7727,-38.2644 395.2713,-48.8476 401.7622,-46.2268"/>
+<text text-anchor="middle" x="422.5" y="-59.8" font-family="Times,serif" font-size="14.00" fill="#000000">none</text>
+</g>
+<!-- F1bad -->
+<g id="node11" class="node">
+<title>F1bad</title>
+<polygon fill="none" stroke="#000000" points="486,-38 432,-38 432,0 486,0 486,-38"/>
+<text text-anchor="middle" x="459" y="-22.8" font-family="Times,serif" font-size="14.00" fill="#000000">No</text>
+<text text-anchor="middle" x="459" y="-7.8" font-family="Times,serif" font-size="14.00" fill="#000000">L8</text>
+</g>
+<!-- F&#45;&gt;F1bad -->
+<g id="edge10" class="edge">
+<title>F&#45;&gt;F1bad</title>
+<path fill="none" stroke="#000000" d="M430.2851,-89.9895C435.1788,-77.8912 441.7338,-61.6859 447.3453,-47.813"/>
+<polygon fill="#000000" stroke="#000000" points="450.7221,-48.7986 451.2273,-38.2158 444.2328,-46.1737 450.7221,-48.7986"/>
+<text text-anchor="middle" x="455" y="-59.8" font-family="Times,serif" font-size="14.00" fill="#000000">bad</text>
+</g>
+<!-- F1nice -->
+<g id="node12" class="node">
+<title>F1nice</title>
+<polygon fill="none" stroke="#000000" points="558,-38 504,-38 504,0 558,0 558,-38"/>
+<text text-anchor="middle" x="531" y="-22.8" font-family="Times,serif" font-size="14.00" fill="#000000">Yes</text>
+<text text-anchor="middle" x="531" y="-7.8" font-family="Times,serif" font-size="14.00" fill="#000000">L9</text>
+</g>
+<!-- F&#45;&gt;F1nice -->
+<g id="edge11" class="edge">
+<title>F&#45;&gt;F1nice</title>
+<path fill="none" stroke="#000000" d="M444.1964,-91.597C452.3226,-85.2346 461.6458,-77.8448 470,-71 480.2774,-62.5794 491.3736,-53.2069 501.2484,-44.7637"/>
+<polygon fill="#000000" stroke="#000000" points="503.5562,-47.3954 508.8668,-38.2276 498.9982,-42.0826 503.5562,-47.3954"/>
+<text text-anchor="middle" x="499" y="-59.8" font-family="Times,serif" font-size="14.00" fill="#000000">nice</text>
+</g>
+</g>
+</svg>
+
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-cfeca416-f4d5-43a6-b705-37f64759bedc" ><span id="id-cfeca416-f4d5-43a6-b705-37f64759bedc"><img id="img-id-cfeca416-f4d5-43a6-b705-37f64759bedc"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-9f088f7e-7ee7-44b9-a923-7fd30570f288" ><span id="id-9f088f7e-7ee7-44b9-a923-7fd30570f288"><img id="img-id-9f088f7e-7ee7-44b9-a923-7fd30570f288" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00011_frag_00001" data-state="slide_00011_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>Decision Tree</h1>
+
+<div class="jb-text">
+<p>This classification hierarchy is called a <b><a href="https://en.wikipedia.org/wiki/Decision_tree">decision tree</a></b></p>
+<p>Each leaf node (L1..L9) assigns a classification (Yes/No) to a set of instances</p> 
+<p>For example: L6 = No implies that <code>[ small, other, *, * ] = No</code></p>
+<p>L6 matches more than one instance/applies to a class of instances: <code>[small, other, bad, yes]</code>
+and <code>[small, other, none, no]</code> will all be classied as L6=No</p> 
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-79abedbc-e99c-4c50-ac26-020d2fee6dda" ><span id="id-79abedbc-e99c-4c50-ac26-020d2fee6dda"><img id="img-id-79abedbc-e99c-4c50-ac26-020d2fee6dda"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-2c6c45b3-d0c5-4636-85dd-049fa07be166" ><span id="id-2c6c45b3-d0c5-4636-85dd-049fa07be166"><img id="img-id-2c6c45b3-d0c5-4636-85dd-049fa07be166" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00012_frag_00001" data-state="slide_00012_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>Generalization</h1>
+
+<div class="jb-text">
+<p>In our sample dataset, we do not have any flower that matches <code>[small, other, *, *]</code></p>
+<p>Does this mean that our decision tree (or any other ML model that you may have learned) is good or bad</p>
+<p><b>No</b>, it does not mean that it is a bad model. If you are only interested in the example instances
+given to your algorithm, then you can just use a database and lookup the correct classification</p>
+<p>The most important aspect of a ML system is its ability to use induction to generalize to unseen 
+instances</p>
+<p>Since our training data is often noisy, it may even be the case that our model and our training data
+disagree on an instance. For example F2 is "No", but classified as "Yes" in the decision tree</p>
+<p><b> 
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-8a99b9ef-534c-447f-bb12-ddb0ab4c98bc" ><span id="id-8a99b9ef-534c-447f-bb12-ddb0ab4c98bc"><img id="img-id-8a99b9ef-534c-447f-bb12-ddb0ab4c98bc"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-370c9014-6a26-4d23-841c-11fa2ef4c1ab" ><span id="id-370c9014-6a26-4d23-841c-11fa2ef4c1ab"><img id="img-id-370c9014-6a26-4d23-841c-11fa2ef4c1ab" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00013_frag_00001" data-state="slide_00013_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>Generalization</h1>
+
+<blockquote>
+The most important aspect of any machine learning system is its ability to <b>generalize</b>,
+that is to correctly classify <b>previously unseen</b> instances (i.e., instances not in the
+training data)
+</blockquote>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-082494b2-6bbe-4f51-bf30-be9b75b6f249" ><span id="id-082494b2-6bbe-4f51-bf30-be9b75b6f249"><img id="img-id-082494b2-6bbe-4f51-bf30-be9b75b6f249"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-0cb84fe8-ec2b-446f-85ce-07203db53867" ><span id="id-0cb84fe8-ec2b-446f-85ce-07203db53867"><img id="img-id-0cb84fe8-ec2b-446f-85ce-07203db53867" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00014_frag_00001" data-state="slide_00014_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+
+<h1>Decision Trees and Generalizations</h1>
+
+<div style="width:50%">
+<span id="id-f2748ecc-8594-406d-82c8-1e5d31369431" ><span id="id-f2748ecc-8594-406d-82c8-1e5d31369431"><img id="img-id-f2748ecc-8594-406d-82c8-1e5d31369431"     src="assets/images/svg1.svg"/></span>
+</span>
+
+</div>
+
+<div class="jb-text">
+<p>What kind of trees can generalize well?</p>
+<p>Each level in the node, we check one more attribute</p>
+
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-5f6bf7bb-9099-4b47-9b16-f91c16e16671" ><span id="id-5f6bf7bb-9099-4b47-9b16-f91c16e16671"><img id="img-id-5f6bf7bb-9099-4b47-9b16-f91c16e16671"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-ea88a121-6e04-497c-84a2-3b0aa7c53ceb" ><span id="id-ea88a121-6e04-497c-84a2-3b0aa7c53ceb"><img id="img-id-ea88a121-6e04-497c-84a2-3b0aa7c53ceb" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00015_frag_00001" data-state="slide_00015_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>Decision Trees</h1>
+
+<div class="jb-text">
+<p>Instances filter throguh the tree starting at the root</p>
+<p>At each internal node, we check one attribute and then break the instance set
+into the different groups, based on the value of the attribute</p>
+<p>Every level, the number of instances that we are considering is decreasing</p>
+<p>The deeper the tree is, the more specialized the decision is</p>
+<p>Assumption: The smaller the tree, the better the tree is at classifying unseen
+instances</p>
+<p><a href="https://en.wikipedia.org/wiki/Occam%27s_razor">Occam's Razor</a>
+<blockquote>
+The simplest solution is usually the best one
+</blockquote>
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-f5f785bf-79b8-410b-9713-7b3ab34edd11" ><span id="id-f5f785bf-79b8-410b-9713-7b3ab34edd11"><img id="img-id-f5f785bf-79b8-410b-9713-7b3ab34edd11"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-61aa644a-d8de-4d96-bdf9-06179488b052" ><span id="id-61aa644a-d8de-4d96-bdf9-06179488b052"><img id="img-id-61aa644a-d8de-4d96-bdf9-06179488b052" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00016_frag_00001" data-state="slide_00016_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>Decision Trees</h1>
+
+<div class="jb-text">
+<p>Using Occam's razor, we assume that small tree are better than large decision trees</p>
+<p>A small tree is less likely to match data by chance, through random selection of training data</p>
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-9bace7b1-1f15-4ad6-af22-996d810e5395" ><span id="id-9bace7b1-1f15-4ad6-af22-996d810e5395"><img id="img-id-9bace7b1-1f15-4ad6-af22-996d810e5395"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-0cf3a3ad-abe4-4aee-944a-f5df5e50dfc5" ><span id="id-0cf3a3ad-abe4-4aee-944a-f5df5e50dfc5"><img id="img-id-0cf3a3ad-abe4-4aee-944a-f5df5e50dfc5" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00017_frag_00001" data-state="slide_00017_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>The ID3 Algorithm</h1>
+
+<div class="jb-text">
+<p>How do we create small/shallow trees?</p>
+<p>Most popular algorithms are based on Ross Quinlan's 
+<a href="https://en.wikipedia.org/wiki/ID3_algorithm">ID3 algorithm</a>
+<p>ID3 algorithm is based on the idea of entropy and Shannon's information theory</p>
+<p>Entropy is the amount of bits needed to encode a message based on its probability</p>
+<p>
+Shannon showed that the minimum number of bits needed to encode a message with probability <emph>p</emph>
+</p>
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-89644c59-f538-4e76-aeba-74f145b540b9" ><span id="id-89644c59-f538-4e76-aeba-74f145b540b9"><img id="img-id-89644c59-f538-4e76-aeba-74f145b540b9"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-d80c2425-3abe-41ed-bbc1-e2cebc91093c" ><span id="id-d80c2425-3abe-41ed-bbc1-e2cebc91093c"><img id="img-id-d80c2425-3abe-41ed-bbc1-e2cebc91093c" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00018_frag_00001" data-state="slide_00018_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>Entropy Example</h1>
+
+<div class="jb-text">
+
+<p>a robot on Mars can send back 1 of 4 possible messages. Sending a message costs
+a lot of power, so you want to send the smallest possible message. How many bits do you need to send 
+back to earth?</p>
+<blockquote>
+<pre>
+Message           Probability
+-----------------------------
+Working           0.7
+Charging          0.2
+Warning           0.08
+Error             0.02
+</pre>
+</blockquote>
+<p>A naive approach would calculate the number of necessary bits as log2(4) = 2</p>
+<p>However, assuming that the robot has spent 15 years on Mars (e.g., Opportunity 2004 - 2019),
+then we will transmit many more <code>Working</code> messages than <code>Error</code> messages</p>
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-fe9a736e-98c0-48bb-b045-57d1a5bd37ca" ><span id="id-fe9a736e-98c0-48bb-b045-57d1a5bd37ca"><img id="img-id-fe9a736e-98c0-48bb-b045-57d1a5bd37ca"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-0e078372-ded9-4469-9b14-bae55753a4d1" ><span id="id-0e078372-ded9-4469-9b14-bae55753a4d1"><img id="img-id-0e078372-ded9-4469-9b14-bae55753a4d1" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00019_frag_00001" data-state="slide_00019_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>Shannon's Information Theory</h1>
+
+<div class="jb-text">
+<p>If the probabilities are not equal, then a different (variable length) coding scheme 
+is better</p>
+<p>The minimum length of the encoding of the message is given by the entropy</p>
+\[
+    ent = \sum_{i} - p_i \cdot log_{2}( p_i ) 
+\]
+<p>In our example, we need to send only 1.22 bits per message on average. So we save almost 50% of the power</p>
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-22d395fa-54df-4e59-be28-51e985f764d1" ><span id="id-22d395fa-54df-4e59-be28-51e985f764d1"><img id="img-id-22d395fa-54df-4e59-be28-51e985f764d1"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-13da2ee3-8e30-487f-8b8b-b04fbce098b8" ><span id="id-13da2ee3-8e30-487f-8b8b-b04fbce098b8"><img id="img-id-13da2ee3-8e30-487f-8b8b-b04fbce098b8" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="entropy" data-state="entropy">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+<div class="jb-input jb-render jb-code" style="text-align:center">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-input-code jb-render">
+<div class="highlight" style="background: #f8f8f8; color:#101010;display=inline-block;"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">math</span>
+
+<span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">calcEntropy</span>( pos, neg ):
+    <span style="color: #008000">sum</span> <span style="color: #666666">=</span> pos <span style="color: #666666">+</span> neg
+    ent <span style="color: #666666">=</span> <span style="color: #666666">0</span>
+    <span style="color: #008000; font-weight: bold">if</span> ( <span style="color: #008000">sum</span> <span style="color: #666666">&gt;</span> <span style="color: #666666">0</span> ):
+        p <span style="color: #666666">=</span> pos<span style="color: #666666">/</span><span style="color: #008000">sum</span>
+        n <span style="color: #666666">=</span> neg<span style="color: #666666">/</span><span style="color: #008000">sum</span>
+        <span style="color: #008000; font-weight: bold">if</span> ( p <span style="color: #666666">&gt;</span> <span style="color: #666666">0.0</span> ) <span style="color: #AA22FF; font-weight: bold">and</span> ( n <span style="color: #666666">&gt;</span> <span style="color: #666666">0.0</span> ):
+            ent <span style="color: #666666">=</span> <span style="color: #666666">0.0</span>
+            <span style="color: #008000; font-weight: bold">for</span> x <span style="color: #AA22FF; font-weight: bold">in</span> [ p, n ]:
+                ent <span style="color: #666666">=</span> ent <span style="color: #666666">-</span> x <span style="color: #666666">*</span> math<span style="color: #666666">.</span>log( x, <span style="color: #666666">2</span> )
+    <span style="color: #008000; font-weight: bold">return</span> ent
+</pre></div>
+
+</div><!-- end of jb-input-code jb-render -->
+
+</div>
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-f6921cd7-b987-4bea-ad43-a90cd1754556" ><span id="id-f6921cd7-b987-4bea-ad43-a90cd1754556"><img id="img-id-f6921cd7-b987-4bea-ad43-a90cd1754556"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-467e8afc-6b0b-4b38-85f2-4b7744ec4516" ><span id="id-467e8afc-6b0b-4b38-85f2-4b7744ec4516"><img id="img-id-467e8afc-6b0b-4b38-85f2-4b7744ec4516" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00021_frag_00001" data-state="slide_00021_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+<div class="jb-input jb-render jb-code" style="text-align:center">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-input-code jb-render">
+<div class="highlight" style="background: #f8f8f8; color:#101010;display=inline-block;"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">matplotlib.pyplot</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">plt</span>
+<span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">numpy</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">np</span> 
+<span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">math</span>
+
+x <span style="color: #666666">=</span> np<span style="color: #666666">.</span>linspace(<span style="color: #666666">0</span>, <span style="color: #666666">1</span>, <span style="color: #666666">100</span>)
+y <span style="color: #666666">=</span> [ calcEntropy(xi, <span style="color: #666666">1-</span>xi) <span style="color: #008000; font-weight: bold">for</span> xi <span style="color: #AA22FF; font-weight: bold">in</span> x ]
+
+fig <span style="color: #666666">=</span> plt<span style="color: #666666">.</span>figure()
+ax <span style="color: #666666">=</span> fig<span style="color: #666666">.</span>add_subplot( <span style="color: #666666">1</span>, <span style="color: #666666">1</span>, <span style="color: #666666">1</span> )
+ax<span style="color: #666666">.</span>set_title(<span style="color: #BA2121">&#39;Entropy function for binary classification&#39;</span>)
+ax<span style="color: #666666">.</span>plot( x, y, <span style="color: #BA2121">&#39;b-&#39;</span>, linewidth <span style="color: #666666">=</span> <span style="color: #666666">2</span> )
+
+ent1 <span style="color: #666666">=</span> addJBFigure(<span style="color: #BA2121">&quot;ent1&quot;</span>, <span style="color: #666666">0</span>, <span style="color: #666666">0</span>, fig )
+plt<span style="color: #666666">.</span>close()
+</pre></div>
+
+</div><!-- end of jb-input-code jb-render -->
+
+</div>
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-f4efe4d4-6529-42e4-8b64-ce69658eabf6" ><span id="id-f4efe4d4-6529-42e4-8b64-ce69658eabf6"><img id="img-id-f4efe4d4-6529-42e4-8b64-ce69658eabf6"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-6d7a054e-4f89-416b-b737-db46ddb86455" ><span id="id-6d7a054e-4f89-416b-b737-db46ddb86455"><img id="img-id-6d7a054e-4f89-416b-b737-db46ddb86455" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00022_frag_00001" data-state="slide_00022_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>Entropy</h1>
+
+<span id="id-9c951719-c322-4719-850b-d153d2e6f18f" ><span id="id-9c951719-c322-4719-850b-d153d2e6f18f"><img id="img-id-9c951719-c322-4719-850b-d153d2e6f18f"     src="assets/images/ent1.svg"/></span>
+</span>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-ea31cb54-4310-4fa5-9407-4e61cf43dcc8" ><span id="id-ea31cb54-4310-4fa5-9407-4e61cf43dcc8"><img id="img-id-ea31cb54-4310-4fa5-9407-4e61cf43dcc8"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-5224f210-549b-4db1-a9fe-88323a235637" ><span id="id-5224f210-549b-4db1-a9fe-88323a235637"><img id="img-id-5224f210-549b-4db1-a9fe-88323a235637" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00023_frag_00001" data-state="slide_00023_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>Entropy in Machine Learning</h1>
+
+<div class="jb-text">
+<p>Calculate the entropy of our flower dataset. Entropy with respect
+to the target classification</p>
+<p>How uncertain is the classification of an instance if you just guess
+without any other information about the target</p>
+<p>Entropy( 4: No, 4:Yes ) = 1.0. Maximal confusion</p>
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-74ad4e71-1087-4772-97ca-25fcb02d8a8c" ><span id="id-74ad4e71-1087-4772-97ca-25fcb02d8a8c"><img id="img-id-74ad4e71-1087-4772-97ca-25fcb02d8a8c"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-0e1f47bf-b3c9-4f2d-858f-113f4dad85a2" ><span id="id-0e1f47bf-b3c9-4f2d-858f-113f4dad85a2"><img id="img-id-0e1f47bf-b3c9-4f2d-858f-113f4dad85a2" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00024_frag_00001" data-state="slide_00024_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>ID3 Algorithm</h1>
+
+<div class="jb-text">
+<p>We start with the set of training instances F1 .. F8.</p>
+<p>We must select one attribute and then use this attribute to 
+divide the instances into different groups</p>
+<p>Perfect attribute to check: after attribute test the entropy of the resulting groups is 0</p>
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-9a1249c7-b71f-40f2-9e7b-14fd58e089d0" ><span id="id-9a1249c7-b71f-40f2-9e7b-14fd58e089d0"><img id="img-id-9a1249c7-b71f-40f2-9e7b-14fd58e089d0"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-37585b33-7f6a-4835-9e33-9b920fecb924" ><span id="id-37585b33-7f6a-4835-9e33-9b920fecb924"><img id="img-id-37585b33-7f6a-4835-9e33-9b920fecb924" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00025_frag_00001" data-state="slide_00025_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>Example: Attribute Size</h1>
+
+<div class="jb-text">
+<p>If we choose attribute Size, then our instance set F1 .. F8 will be broken 
+down into 3 sets (Small, Medium, Large)</p>
+<code>
+<pre>
+Attribute Size:
+   Label     Instances      Classification    Entropy
+   Small     (F2, F3, F5)   Yes: 1, No: 2       0.91
+   Medium    (F1, F4, F7)   Yes: 1, No: 2       0.91
+   Large     (F6,F8)        Yes: 2, No: 0       0.00  
+
+Entropy after Split: 0.91 + 0.91 + 0 = 1.82    
+</pre>
+</code>
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-61df1575-2dfc-4cf2-bfe1-a3327a45b963" ><span id="id-61df1575-2dfc-4cf2-bfe1-a3327a45b963"><img id="img-id-61df1575-2dfc-4cf2-bfe1-a3327a45b963"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-366a6bba-cc48-4bd0-a897-34e243e8c9a8" ><span id="id-366a6bba-cc48-4bd0-a897-34e243e8c9a8"><img id="img-id-366a6bba-cc48-4bd0-a897-34e243e8c9a8" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00026_frag_00001" data-state="slide_00026_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>Example: Attribute Color</h1>
+
+<div class="jb-text">
+<p>Instance set F1 .. F8 will be broken down into 4 values: purple, other, red, green</p>
+<code>
+<pre>
+Attribute Color:
+   Label     Instances      Classification    Entropy
+  purple     F1, F2, F3, F5   Yes: 2 No: 2       1.00
+   other     F4, F7           Yes: 0 No: 2       0.00
+   green     F6               Yes: 1 No: 0       0.00
+     red     F8               Yes: 1 No: 0       0.00
+Entropy after Split: 1 + 0 + 0 + 0 = 1    
+</pre>
+</code>
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-52049c36-437b-48c4-a7da-c681425beecd" ><span id="id-52049c36-437b-48c4-a7da-c681425beecd"><img id="img-id-52049c36-437b-48c4-a7da-c681425beecd"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-92791b32-e0c7-4ff6-89da-01ac035a26a4" ><span id="id-92791b32-e0c7-4ff6-89da-01ac035a26a4"><img id="img-id-92791b32-e0c7-4ff6-89da-01ac035a26a4" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00027_frag_00001" data-state="slide_00027_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>Example: Attribute Fragrance</h1>
+
+<div class="jb-text">
+<p>Instance set F1 .. F8 will be broken down into 3 values: nice, none, bad</p>
+<code>
+<pre>
+Attribute Color:
+   Label     Instances      Classification    Entropy
+    nice     F1, F2, F6       Yes: 2 No: 1       0.91
+    none     F3, F7           Yes: 0 No: 2       0.00
+     bad     F4, F5           Yes: 2 No: 1       0.91
+Entropy after Split: 0.91 + 0 + 0.91 = 1.82    
+</pre>
+</code>
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-4818e84e-5c34-483c-904d-021720b6f093" ><span id="id-4818e84e-5c34-483c-904d-021720b6f093"><img id="img-id-4818e84e-5c34-483c-904d-021720b6f093"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-456a57db-2210-494e-85fd-051638685e12" ><span id="id-456a57db-2210-494e-85fd-051638685e12"><img id="img-id-456a57db-2210-494e-85fd-051638685e12" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00028_frag_00001" data-state="slide_00028_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>Example: Attribute Thorns</h1>
+
+<div class="jb-text">
+<p>Instance set F1 .. F8 will be broken down into 3 values: yes, no</p>
+<code>
+<pre>
+Attribute Thorns:
+   Label     Instances      Classification    Entropy
+     yes     F2,F3,F7         Yes: 0 No: 3       0.00
+      no     F1,F4,F5,F6,F8   Yes: 4 No: 1       0.00
+Entropy after Split: 0 + 0.72 = 0.72   
+</pre>
+</code>
+<p>ID3 algorithm will choose attribute "Thorns" because it selects 
+the attribute which results in the lowest entropy (almost)</p>
+<p>The lower the entropy/uncertainty in the instance set, the higher the
+chance that we can find another attribute to split the resulting
+instance sets</p>
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-517f2380-ff97-4c27-95cb-8000853737f6" ><span id="id-517f2380-ff97-4c27-95cb-8000853737f6"><img id="img-id-517f2380-ff97-4c27-95cb-8000853737f6"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-1cc25ed8-6003-43a3-b242-a25c84c0b478" ><span id="id-1cc25ed8-6003-43a3-b242-a25c84c0b478"><img id="img-id-1cc25ed8-6003-43a3-b242-a25c84c0b478" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00029_frag_00001" data-state="slide_00029_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>ID3 Algorithm</h2>
+
+<div class="jb-text">
+<p>Information gain heuristic to select an attribute to split the instance set</p>
+<p>Information gain</p>
+\[
+  IG( I, a ) = ent(I) - \sum_{s} \frac{|I[a=s]|}{|I|} ent( I[a = s] )
+\]
+<p>ID3 will select an attribute based on the information gain heuristic: sum of entropies for each
+subset weighted by the size of the resulting subset</p>
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-352517b8-0ca0-4dfc-9ba5-cde30364cdce" ><span id="id-352517b8-0ca0-4dfc-9ba5-cde30364cdce"><img id="img-id-352517b8-0ca0-4dfc-9ba5-cde30364cdce"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-1e9e8cff-b823-416c-932c-a22d543575fd" ><span id="id-1e9e8cff-b823-416c-932c-a22d543575fd"><img id="img-id-1e9e8cff-b823-416c-932c-a22d543575fd" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00030_frag_00001" data-state="slide_00030_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+<div class="jb-input jb-render jb-code" style="text-align:center">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-input-code jb-render">
+<div style="font-size:0.5em;"><!-- start of style="font-size:0.5em;" -->
+<div class="highlight" style="background: #f8f8f8; color:#101010;display=inline-block;"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">pandas</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">pd</span>
+<span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">IPython.display</span> <span style="color: #008000; font-weight: bold">import</span> display, HTML
+<span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">random</span>
+
+FlowerAttributes <span style="color: #666666">=</span> {
+    <span style="color: #BA2121">&#39;Size&#39;</span> : [ <span style="color: #BA2121">&#39;small&#39;</span>, <span style="color: #BA2121">&#39;medium&#39;</span>, <span style="color: #BA2121">&#39;large&#39;</span> ],
+    <span style="color: #BA2121">&#39;Color&#39;</span> : [ <span style="color: #BA2121">&#39;red&#39;</span>, <span style="color: #BA2121">&#39;green&#39;</span>, <span style="color: #BA2121">&#39;blue&#39;</span>, <span style="color: #BA2121">&#39;purple&#39;</span>, <span style="color: #BA2121">&#39;other&#39;</span> ],
+    <span style="color: #BA2121">&#39;Fragrance&#39;</span>: [ <span style="color: #BA2121">&#39;nice&#39;</span>, <span style="color: #BA2121">&#39;none&#39;</span>, <span style="color: #BA2121">&#39;bad&#39;</span> ],
+    <span style="color: #BA2121">&#39;Thorns&#39;</span> : [ <span style="color: #BA2121">&#39;yes&#39;</span>, <span style="color: #BA2121">&#39;no&#39;</span> ],
+}
+
+<span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">secretClassifyTarget</span>( inst ):
+    resp <span style="color: #666666">=</span> <span style="color: #BA2121">&#39;no&#39;</span>
+    <span style="color: #008000; font-weight: bold">if</span> ( ( inst[<span style="color: #666666">0</span>] <span style="color: #666666">==</span> <span style="color: #BA2121">&#39;medium&#39;</span> ) <span style="color: #AA22FF; font-weight: bold">and</span> ( inst[<span style="color: #666666">2</span>] <span style="color: #666666">==</span> <span style="color: #BA2121">&#39;nice&#39;</span> ) ):
+        resp <span style="color: #666666">=</span> <span style="color: #BA2121">&#39;yes&#39;</span>
+    <span style="color: #008000; font-weight: bold">elif</span> ( ( ( inst[<span style="color: #666666">0</span>] <span style="color: #666666">==</span> <span style="color: #BA2121">&#39;large&#39;</span> ) <span style="color: #AA22FF; font-weight: bold">or</span> ( inst[<span style="color: #666666">0</span>] <span style="color: #666666">==</span> <span style="color: #BA2121">&#39;small&#39;</span> ) ) <span style="color: #AA22FF; font-weight: bold">and</span> ( inst[<span style="color: #666666">3</span>] <span style="color: #666666">==</span> <span style="color: #BA2121">&#39;no&#39;</span> ) ):
+        resp <span style="color: #666666">=</span> <span style="color: #BA2121">&#39;yes&#39;</span>
+    <span style="color: #008000; font-weight: bold">return</span> resp
+
+done <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">False</span>
+<span style="color: #008000; font-weight: bold">while</span>( <span style="color: #AA22FF; font-weight: bold">not</span> done ):
+    instances <span style="color: #666666">=</span> []
+
+    <span style="color: #008000; font-weight: bold">while</span>( <span style="color: #008000">len</span>(instances) <span style="color: #666666">&lt;</span> <span style="color: #666666">10</span> ):
+        inst <span style="color: #666666">=</span> []
+        <span style="color: #008000; font-weight: bold">for</span> k <span style="color: #AA22FF; font-weight: bold">in</span> FlowerAttributes:
+            inst<span style="color: #666666">.</span>append( random<span style="color: #666666">.</span>choice( FlowerAttributes[ k ] ) )
+        <span style="color: #008000; font-weight: bold">if</span> inst <span style="color: #AA22FF; font-weight: bold">not</span> <span style="color: #AA22FF; font-weight: bold">in</span> instances:
+            instances<span style="color: #666666">.</span>append(inst)
+
+    target <span style="color: #666666">=</span> []
+    <span style="color: #008000; font-weight: bold">for</span> i <span style="color: #AA22FF; font-weight: bold">in</span> instances:
+        target<span style="color: #666666">.</span>append( secretClassifyTarget( i ) )
+
+    <span style="color: #008000; font-weight: bold">if</span> ( <span style="color: #BA2121">&#39;yes&#39;</span> <span style="color: #AA22FF; font-weight: bold">in</span> target ) <span style="color: #AA22FF; font-weight: bold">and</span> ( <span style="color: #BA2121">&#39;no&#39;</span> <span style="color: #AA22FF; font-weight: bold">in</span> target ):
+        done <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">True</span>
+
+df <span style="color: #666666">=</span> pd<span style="color: #666666">.</span>DataFrame(instances, 
+                  columns<span style="color: #666666">=</span>[<span style="color: #BA2121">&#39;Size&#39;</span>, <span style="color: #BA2121">&#39;Color&#39;</span>, <span style="color: #BA2121">&#39;Fragrance&#39;</span>, 
+                           <span style="color: #BA2121">&#39;Thorns&#39;</span> ], 
+                  index<span style="color: #666666">=</span>[ <span style="color: #BA2121">&#39;F_</span><span style="color: #BB6688; font-weight: bold">{0}</span><span style="color: #BA2121">&#39;</span><span style="color: #666666">.</span>format(i<span style="color: #666666">+1</span>) 
+                         <span style="color: #008000; font-weight: bold">for</span> i <span style="color: #AA22FF; font-weight: bold">in</span> <span style="color: #008000">range</span>(<span style="color: #008000">len</span>(instances)) ] )
+
+df1 <span style="color: #666666">=</span> df<span style="color: #666666">.</span>assign(Target <span style="color: #666666">=</span> target )
+</pre></div>
+
+</div><!-- end of style="font-size:0.5em;" -->
+</div><!-- end of jb-input-code jb-render -->
+
+</div>
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-b70f386a-3127-4566-9452-6e76490dfc6b" ><span id="id-b70f386a-3127-4566-9452-6e76490dfc6b"><img id="img-id-b70f386a-3127-4566-9452-6e76490dfc6b"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-e511f0bc-448b-4251-be97-913dc071f98b" ><span id="id-e511f0bc-448b-4251-be97-913dc071f98b"><img id="img-id-e511f0bc-448b-4251-be97-913dc071f98b" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00031_frag_00001" data-state="slide_00031_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+<div class="jb-print jb-render">
+<div style="font-size:0.5em;"><!-- start of style="font-size:0.5em;" -->
+<div class="jb-output jb-render code" style="text-align:center">
+<div class="jb-stdout code" style="display:inline-block; width:90%">
+<pre style="font-size:0.5em;">
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Size</th>
+      <th>Color</th>
+      <th>Fragrance</th>
+      <th>Thorns</th>
+      <th>Target</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>F_1</th>
+      <td>large</td>
+      <td>other</td>
+      <td>nice</td>
+      <td>no</td>
+      <td>yes</td>
+    </tr>
+    <tr>
+      <th>F_2</th>
+      <td>small</td>
+      <td>red</td>
+      <td>nice</td>
+      <td>yes</td>
+      <td>no</td>
+    </tr>
+    <tr>
+      <th>F_3</th>
+      <td>small</td>
+      <td>blue</td>
+      <td>nice</td>
+      <td>no</td>
+      <td>yes</td>
+    </tr>
+    <tr>
+      <th>F_4</th>
+      <td>medium</td>
+      <td>other</td>
+      <td>nice</td>
+      <td>no</td>
+      <td>yes</td>
+    </tr>
+    <tr>
+      <th>F_5</th>
+      <td>medium</td>
+      <td>red</td>
+      <td>bad</td>
+      <td>no</td>
+      <td>no</td>
+    </tr>
+    <tr>
+      <th>F_6</th>
+      <td>large</td>
+      <td>purple</td>
+      <td>bad</td>
+      <td>no</td>
+      <td>yes</td>
+    </tr>
+    <tr>
+      <th>F_7</th>
+      <td>large</td>
+      <td>red</td>
+      <td>bad</td>
+      <td>yes</td>
+      <td>no</td>
+    </tr>
+    <tr>
+      <th>F_8</th>
+      <td>small</td>
+      <td>red</td>
+      <td>none</td>
+      <td>yes</td>
+      <td>no</td>
+    </tr>
+    <tr>
+      <th>F_9</th>
+      <td>large</td>
+      <td>blue</td>
+      <td>bad</td>
+      <td>yes</td>
+      <td>no</td>
+    </tr>
+    <tr>
+      <th>F_10</th>
+      <td>small</td>
+      <td>other</td>
+      <td>nice</td>
+      <td>yes</td>
+      <td>no</td>
+    </tr>
+  </tbody>
+</table>
+</pre>
+</div>
+</div>
+
+</div><!-- end of style="font-size:0.5em;" -->
+</div><!-- end of jb-print jb-render -->
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-db78fd00-4030-4632-a869-aa7fe08dc589" ><span id="id-db78fd00-4030-4632-a869-aa7fe08dc589"><img id="img-id-db78fd00-4030-4632-a869-aa7fe08dc589"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-e5a9ed9a-e8f2-43b4-8b37-a3b34e7a16b3" ><span id="id-e5a9ed9a-e8f2-43b4-8b37-a3b34e7a16b3"><img id="img-id-e5a9ed9a-e8f2-43b4-8b37-a3b34e7a16b3" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="example" data-state="example">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+<div class="jb-print jb-render">
+<div style="font-size:0.35em"><!-- start of style="font-size:0.35em" -->
+<div class="jb-output jb-render code" style="text-align:center">
+<div class="jb-stdout code" style="display:inline-block; width:90%">
+<pre style="font-size:0.35em">
+Target: Yes 4 No 6
+Attribute Size Value small pos 1 neg 3 Entropy  0.81 Size 0.4
+Attribute Size Value medium pos 1 neg 1 Entropy  1.00 Size 0.2
+Attribute Size Value large pos 2 neg 2 Entropy  1.00 Size 0.4
+Attribute Size Information Gain 0.04643934467101546
+Attribute Color Value red pos 0 neg 4 Entropy  0.00 Size 0.4
+Attribute Color Value green pos 0 neg 0 Entropy  0.00 Size 0.0
+Attribute Color Value blue pos 1 neg 1 Entropy  1.00 Size 0.2
+Attribute Color Value purple pos 1 neg 0 Entropy  0.00 Size 0.1
+Attribute Color Value other pos 2 neg 1 Entropy  0.92 Size 0.3
+Attribute Color Information Gain 0.4954618442383218
+Attribute Fragrance Value nice pos 3 neg 2 Entropy  0.97 Size 0.5
+Attribute Fragrance Value none pos 0 neg 1 Entropy  0.00 Size 0.1
+Attribute Fragrance Value bad pos 1 neg 3 Entropy  0.81 Size 0.4
+Attribute Fragrance Information Gain 0.16096404744368115
+Attribute Thorns Value yes pos 0 neg 5 Entropy  0.00 Size 0.5
+Attribute Thorns Value no pos 4 neg 1 Entropy  0.72 Size 0.5
+Attribute Thorns Information Gain 0.6099865470109874
+</pre>
+</div>
+</div>
+
+</div><!-- end of style="font-size:0.35em" -->
+</div><!-- end of jb-print jb-render -->
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-c9d12a4c-ba35-4167-a949-3022ab1bc731" ><span id="id-c9d12a4c-ba35-4167-a949-3022ab1bc731"><img id="img-id-c9d12a4c-ba35-4167-a949-3022ab1bc731"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-fcb4d0bd-e564-49fc-907d-d8fa84a63637" ><span id="id-fcb4d0bd-e564-49fc-907d-d8fa84a63637"><img id="img-id-fcb4d0bd-e564-49fc-907d-d8fa84a63637" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00034_frag_00001" data-state="slide_00034_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>Extensions of ID3</h1>
+
+<div class="jb-text">
+<p>ID3 can learn arbitrary functions. The algorithm is complete</p>
+<p>Maintains a single hypothesis that is expanded recusrsively. No benefit for an active
+learner</p>
+<p>Example: <a href="https://www.nytimes.com/games/wordle/index.html">Wordle</a> game. 
+The object of the game is to guess a word. This is impossible to solve for a passive
+learner</p>
+<p>In Wordl you have a chance since you can be an active learner</p>
+<p>No backtracking (Greedy search). Chance will fall into a local minimum. Impossible 
+to recover from sub-optimal splits</p>
+<p>Statistics based approch. Uses all the training data available. Robust to noisy data</p>
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-30fe2825-35cb-41d4-9f53-69e641433128" ><span id="id-30fe2825-35cb-41d4-9f53-69e641433128"><img id="img-id-30fe2825-35cb-41d4-9f53-69e641433128"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-63c75327-02ab-4a21-865e-856f1588923f" ><span id="id-63c75327-02ab-4a21-865e-856f1588923f"><img id="img-id-63c75327-02ab-4a21-865e-856f1588923f" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00035_frag_00001" data-state="slide_00035_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>Extensions of ID3</h1>
+
+<div class="jb-text">
+<p>Easy to convert the tree into a set of rules. <code>if size == medium and fragrance == no then yes</code></p>
+<p>Extensions of ID3 to continuous valued attributes by guessing by generating splits in
+continuous data</p>
+<p>Extensions that deal with attributes that have many values. <code>Gainratio</code></p>
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-198979fd-954d-4c03-ba45-39971677a65e" ><span id="id-198979fd-954d-4c03-ba45-39971677a65e"><img id="img-id-198979fd-954d-4c03-ba45-39971677a65e"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-a856d3da-de6b-48ab-b0a6-bd8aec1ce4a9" ><span id="id-a856d3da-de6b-48ab-b0a6-bd8aec1ce4a9"><img id="img-id-a856d3da-de6b-48ab-b0a6-bd8aec1ce4a9" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+        </div>
+        </div>
+
+        <script src="js/reveal.js"></script>
+
+        <script>
+            // More info about config & dependencies:
+            // - https://github.com/hakimel/reveal.js#configuration
+            // - https://github.com/hakimel/reveal.js#dependencies
+            Reveal.initialize({
+                math: {
+                    mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+                    config: 'TeX-AMS_HTML-full',  // See http://docs.mathjax.org/en/latest/config-files.html
+                    // tex2jax: {
+                    //     inlineMath: [['$', '$'], ['\(', '\)']],
+                    //     displayMath: [['$$', '$$'], ['\[', '\]']],
+                    //     processEscapes: true,
+                    //     processEnvironments: true,
+                    //     skipTags: ['script', 'noscript', 'style', 'textarea', 'code', 'pre'],
+                    //     displayAlign: 'center',
+                    // }                
+                },
+                dependencies: [
+                    { src: 'plugin/markdown/marked.js' },
+                    { src: 'plugin/markdown/markdown.js' },
+                    { src: 'plugin/notes/notes.js', async: true },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: 'plugin/math/math.js', async: true }
+                ]
+            });
+        </script>
+
+        <script>
+            <!-- Assets -->
+var assets = {
+"robbi" : new JBImage( "robbi", "12677", "162", "138", null, null, "assets/images/robbi", "png" ),
+"logo" : new JBImage( "logo", "12033", "0", "0", null, null, "assets/images/logo", "png" ),
+"fira-logo-1" : new JBImage( "fira-logo-1", "93836", "0", "0", null, null, "assets/images/FIRA-logo-1", "png" ),
+"pairLogo" : new JBImage( "pairLogo", "63051", "0", "0", null, null, "assets/images/pairLogo", "png" ),
+"svg1" : new JBImage( "svg1", "60050", "0", "0", null, null, "assets/images/svg1", "svg" ),
+"ent1" : new JBImage( "ent1", "26015", "0", "0", null, null, "assets/images/ent1", "svg" ) 
+};
+var assetInstances = {
+    "id-cdd6259c-58c0-4ff0-92d3-e7af3f6e9d16": assets["robbi"],
+    "id-ed5fa1b8-9416-4d6f-be10-74a9d44b0019": assets["robbi"],
+    "id-bc904403-7d7c-4d61-ae01-33b65caddeb9": assets["robbi"],
+    "id-966fb362-9ff0-4203-801a-e1749f413b36": assets["robbi"],
+    "id-972ce39b-9b2c-4593-ad8a-fd6b7406c215": assets["robbi"],
+    "id-97f0f58a-e10d-48c2-9a8d-0464c3922fdb": assets["robbi"],
+    "id-9477b345-c14d-4530-9c37-4860c3470ee1": assets["robbi"],
+    "id-f5676fca-ebc6-406b-a99e-80de33e03c68": assets["robbi"],
+    "id-9f088f7e-7ee7-44b9-a923-7fd30570f288": assets["robbi"],
+    "id-2c6c45b3-d0c5-4636-85dd-049fa07be166": assets["robbi"],
+    "id-370c9014-6a26-4d23-841c-11fa2ef4c1ab": assets["robbi"],
+    "id-0cb84fe8-ec2b-446f-85ce-07203db53867": assets["robbi"],
+    "id-ea88a121-6e04-497c-84a2-3b0aa7c53ceb": assets["robbi"],
+    "id-61aa644a-d8de-4d96-bdf9-06179488b052": assets["robbi"],
+    "id-0cf3a3ad-abe4-4aee-944a-f5df5e50dfc5": assets["robbi"],
+    "id-d80c2425-3abe-41ed-bbc1-e2cebc91093c": assets["robbi"],
+    "id-0e078372-ded9-4469-9b14-bae55753a4d1": assets["robbi"],
+    "id-13da2ee3-8e30-487f-8b8b-b04fbce098b8": assets["robbi"],
+    "id-467e8afc-6b0b-4b38-85f2-4b7744ec4516": assets["robbi"],
+    "id-6d7a054e-4f89-416b-b737-db46ddb86455": assets["robbi"],
+    "id-5224f210-549b-4db1-a9fe-88323a235637": assets["robbi"],
+    "id-0e1f47bf-b3c9-4f2d-858f-113f4dad85a2": assets["robbi"],
+    "id-37585b33-7f6a-4835-9e33-9b920fecb924": assets["robbi"],
+    "id-366a6bba-cc48-4bd0-a897-34e243e8c9a8": assets["robbi"],
+    "id-92791b32-e0c7-4ff6-89da-01ac035a26a4": assets["robbi"],
+    "id-456a57db-2210-494e-85fd-051638685e12": assets["robbi"],
+    "id-1cc25ed8-6003-43a3-b242-a25c84c0b478": assets["robbi"],
+    "id-1e9e8cff-b823-416c-932c-a22d543575fd": assets["robbi"],
+    "id-e511f0bc-448b-4251-be97-913dc071f98b": assets["robbi"],
+    "id-e5a9ed9a-e8f2-43b4-8b37-a3b34e7a16b3": assets["robbi"],
+    "id-4e63b90c-7213-4487-af97-2bcad7d42db0": assets["robbi"],
+    "id-fcb4d0bd-e564-49fc-907d-d8fa84a63637": assets["robbi"],
+    "id-63c75327-02ab-4a21-865e-856f1588923f": assets["robbi"],
+    "id-a856d3da-de6b-48ab-b0a6-bd8aec1ce4a9": assets["robbi"],
+    "id-5cf989a5-7b69-4b9c-9049-a4a94898b317": assets["logo"],
+    "id-e2924a7a-2f7e-45ca-a27e-69437cd5b3ec": assets["logo"],
+    "id-cce91638-0996-48c7-a094-83e7727bb8b1": assets["logo"],
+    "id-13d2b019-4aa6-4f3e-8204-0f39d8fdfe0d": assets["logo"],
+    "id-7e97f3c8-5456-4c62-ae7b-df4f3692a84f": assets["logo"],
+    "id-dec92f00-dbd8-4e40-8b4d-be1547ecbd25": assets["logo"],
+    "id-45681258-51e9-438b-ae91-e84c15d3e108": assets["logo"],
+    "id-6c763e8a-5836-43b2-a76c-c4f264ea14c3": assets["logo"],
+    "id-cfeca416-f4d5-43a6-b705-37f64759bedc": assets["logo"],
+    "id-79abedbc-e99c-4c50-ac26-020d2fee6dda": assets["logo"],
+    "id-8a99b9ef-534c-447f-bb12-ddb0ab4c98bc": assets["logo"],
+    "id-082494b2-6bbe-4f51-bf30-be9b75b6f249": assets["logo"],
+    "id-5f6bf7bb-9099-4b47-9b16-f91c16e16671": assets["logo"],
+    "id-f5f785bf-79b8-410b-9713-7b3ab34edd11": assets["logo"],
+    "id-9bace7b1-1f15-4ad6-af22-996d810e5395": assets["logo"],
+    "id-89644c59-f538-4e76-aeba-74f145b540b9": assets["logo"],
+    "id-fe9a736e-98c0-48bb-b045-57d1a5bd37ca": assets["logo"],
+    "id-22d395fa-54df-4e59-be28-51e985f764d1": assets["logo"],
+    "id-f6921cd7-b987-4bea-ad43-a90cd1754556": assets["logo"],
+    "id-f4efe4d4-6529-42e4-8b64-ce69658eabf6": assets["logo"],
+    "id-ea31cb54-4310-4fa5-9407-4e61cf43dcc8": assets["logo"],
+    "id-74ad4e71-1087-4772-97ca-25fcb02d8a8c": assets["logo"],
+    "id-9a1249c7-b71f-40f2-9e7b-14fd58e089d0": assets["logo"],
+    "id-61df1575-2dfc-4cf2-bfe1-a3327a45b963": assets["logo"],
+    "id-52049c36-437b-48c4-a7da-c681425beecd": assets["logo"],
+    "id-4818e84e-5c34-483c-904d-021720b6f093": assets["logo"],
+    "id-517f2380-ff97-4c27-95cb-8000853737f6": assets["logo"],
+    "id-352517b8-0ca0-4dfc-9ba5-cde30364cdce": assets["logo"],
+    "id-b70f386a-3127-4566-9452-6e76490dfc6b": assets["logo"],
+    "id-db78fd00-4030-4632-a869-aa7fe08dc589": assets["logo"],
+    "id-0540651f-5316-4533-b95c-a0fadae2d8c7": assets["logo"],
+    "id-c9d12a4c-ba35-4167-a949-3022ab1bc731": assets["logo"],
+    "id-30fe2825-35cb-41d4-9f53-69e641433128": assets["logo"],
+    "id-198979fd-954d-4c03-ba45-39971677a65e": assets["logo"],
+    "id-f2748ecc-8594-406d-82c8-1e5d31369431": assets["svg1"],
+    "id-9c951719-c322-4719-850b-d153d2e6f18f": assets["ent1"]
+};
+<!-- End of Assets -->
+
+            convertURLs(assetInstances, "smart-path");
+        </script>
+        <script>
+            <!-- Characters -->
+var characters =
+{};
+<!-- End of Characters -->
+
+        </script>
+    </body>
+</html>
